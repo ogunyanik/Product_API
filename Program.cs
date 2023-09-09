@@ -8,6 +8,9 @@ using Product_API.Infrastructure.Data;
 using Product_API.Infrastructure.Repositories;
 using AspNetCoreRateLimit;
 using Product_API.Middleware;
+using Serilog;
+using Serilog.Events;
+using Serilog.Sinks.Elasticsearch;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,7 +41,20 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 var app = builder.Build();
 app.UseIpRateLimiting();
-app.UseMiddleware<ExceptionHandlingMiddleware>();
+
+// Configure Serilog for logging
+var configuration = new ConfigurationBuilder()
+    .SetBasePath(Environment.CurrentDirectory)
+    .AddJsonFile("appsettings.json")
+    .Build();
+
+var logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(configuration)
+    .CreateLogger();
+app.UseMiddleware<ExceptionHandlingMiddleware>(logger);
+
+app.UseSerilogRequestLogging();
+
 using (var scope =  app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();

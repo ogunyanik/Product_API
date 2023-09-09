@@ -6,10 +6,11 @@ namespace Product_API.Middleware;
 public class ExceptionHandlingMiddleware
 {
     private readonly RequestDelegate _next;
-
-    public ExceptionHandlingMiddleware(RequestDelegate next)
+    private readonly ILogger<ExceptionHandlingMiddleware> _logger;
+    public ExceptionHandlingMiddleware(RequestDelegate next, ILogger<ExceptionHandlingMiddleware> logger)
     {
         _next = next;
+        _logger = logger; 
     }
 
     public async Task InvokeAsync(HttpContext context)
@@ -20,6 +21,7 @@ public class ExceptionHandlingMiddleware
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "An error occurred during request processing");
             // Handle exceptions and return an appropriate response
             await HandleExceptionAsync(context, ex);
         }
