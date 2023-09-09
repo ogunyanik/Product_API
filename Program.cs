@@ -7,6 +7,7 @@ using Product_API.Core.Services;
 using Product_API.Infrastructure.Data;
 using Product_API.Infrastructure.Repositories;
 using AspNetCoreRateLimit;
+using Polly;
 using Product_API.Middleware;
 using Serilog;
 using Serilog.Events;
@@ -37,6 +38,11 @@ builder.Services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounte
 builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
 builder.Services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
 builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddHttpClient<IProductService, ProductService>(c =>
+    {
+    }
+).AddTransientHttpErrorPolicy(policy => policy.WaitAndRetryAsync(3, _ => TimeSpan.FromMilliseconds(30)));
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 var app = builder.Build();
