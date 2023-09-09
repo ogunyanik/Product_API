@@ -21,10 +21,25 @@
     <ItemGroup>
       <Folder Include="Core\Interfaces\" />
       <Folder Include="Core\Services\" />
-      <Folder Include="Infrastructure\Migrations\" />
       <Folder Include="Infrastructure\Repositories\" />
       <Folder Include="Tests\Integrations\" />
       <Folder Include="Tests\Unit\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="Infrastructure\Migrations\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="Infrastructure\Migrations\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Remove="Infrastructure\Migrations\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Infrastructure\Migrations\**" />
     </ItemGroup>
 
 </Project>
