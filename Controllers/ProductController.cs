@@ -1,4 +1,5 @@
 using AutoMapper;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Product_API.Core.DTO;
 using Product_API.Core.Interfaces;
@@ -20,84 +21,61 @@ public class ProductController : BaseController
         }
 
         [HttpGet]
-        public IActionResult GetProducts()
+        public async Task<IActionResult> GetProducts()
         {
-            // Retrieve a list of products from the ProductService
-            var products = _productService.GetAllProducts();
-
-            // Map the domain models to DTOs
+            var products = await _productService.GetAllProductsAsync();
             var productDTOs = _mapper.Map<IEnumerable<ProductDTO>>(products);
-
             return Ok(productDTOs);
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetProduct(int id)
+        public async Task<IActionResult> GetProduct(int id)
         {
-            // Retrieve a single product by ID from the ProductService
-            // var product = _productService.GetProductById(id);
-            var product = new Product();
+            var product = await _productService.GetProductByIdAsync(id);
             if (product == null)
             {
                 return NotFound();
             }
 
-            // Map the domain model to a DTO
             var productDTO = _mapper.Map<ProductDTO>(product);
-
             return Ok(productDTO);
         }
 
-        // [HttpPost]
-        // public IActionResult CreateProduct([FromBody] ProductDTO productDTO)
-        // {
-        //     // Map the incoming DTO to a domain model
-        //     var product = _mapper.Map<Product>(productDTO);
-        //
-        //     // Use the ProductService to create the product
-        //     var createdProduct = _productService.CreateProduct(product);
-        //
-        //     // Map the created product back to a DTO
-        //     var createdProductDTO = _mapper.Map<ProductDTO>(createdProduct);
-        //
-        //     return CreatedAtAction(nameof(GetProduct), new { id = createdProductDTO.ProductId }, createdProductDTO);
-        // }
-        //
-        // [HttpPut("{id}")]
-        // public IActionResult UpdateProduct(int id, [FromBody] ProductDTO productDTO)
-        // {
-        //     // Map the incoming DTO to a domain model
-        //     var product = _mapper.Map<Product>(productDTO);
-        //
-        //     // Use the ProductService to update the product
-        //     var updatedProduct = _productService.UpdateProduct(id, product);
-        //
-        //     if (updatedProduct == null)
-        //     {
-        //         return NotFound();
-        //     }
-        //
-        //     // Map the updated product back to a DTO
-        //     var updatedProductDTO = _mapper.Map<ProductDTO>(updatedProduct);
-        //
-        //     return Ok(updatedProductDTO);
-        // }
-        //
-        // [HttpDelete("{id}")]
-        // public IActionResult DeleteProduct(int id)
-        // {
-        //     // Use the ProductService to delete the product
-        //     var deletedProduct = _productService.DeleteProduct(id);
-        //
-        //     if (deletedProduct == null)
-        //     {
-        //         return NotFound();
-        //     }
-        //
-        //     // Map the deleted product back to a DTO
-        //     var deletedProductDTO = _mapper.Map<ProductDTO>(deletedProduct);
-        //
-        //     return Ok(deletedProductDTO);
-        // }
-    
+        [HttpPost]
+        public async Task<IActionResult> CreateProduct([FromBody] ProductDTO productDTO)
+        {
+            var product = _mapper.Map<Product>(productDTO);
+            var createdProduct = await _productService.CreateProductAsync(product);
+            var createdProductDTO = _mapper.Map<ProductDTO>(createdProduct);
+            return CreatedAtAction(nameof(GetProduct), new { id = createdProductDTO.ProductId }, createdProductDTO);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateProduct(int id, [FromBody] ProductDTO productDTO)
+        {
+            var product = _mapper.Map<Product>(productDTO);
+            var updatedProduct = await _productService.UpdateProductAsync(id, product);
+            if (updatedProduct == null)
+            {
+                return NotFound();
+            }
+
+            var updatedProductDTO = _mapper.Map<ProductDTO>(updatedProduct);
+            return Ok(updatedProductDTO);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProduct(int id)
+        {
+            var deletedProduct = await _productService.DeleteProductAsync(id);
+            if (deletedProduct == null)
+            {
+                return NotFound();
+            }
+
+            var deletedProductDTO = _mapper.Map<ProductDTO>(deletedProduct);
+
+            return Ok(deletedProductDTO);
+        }
+
 }

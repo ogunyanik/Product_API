@@ -4,7 +4,9 @@ namespace Product_API.Core.Interfaces;
 
 public interface IProductRepository
 { 
-    Task<List<Product>> GetAllProducts();
-
-    Task<Product?> GetById(long id);
+    Task<IEnumerable<Product>> GetAllAsync();
+    Task<Product> GetByIdAsync(int productId);
+    Task<Product> AddAsync(Product product);
+    Task<Product> UpdateAsync(Product product);
+    Task<Product> DeleteAsync(Product product);
 }

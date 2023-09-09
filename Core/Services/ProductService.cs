@@ -12,9 +12,58 @@ public class ProductService : IProductService
         _productRepository = productRepository;
     }
 
-
-    public Task<List<Product>> GetAllProducts()
+    public async Task<IEnumerable<Product>> GetAllProductsAsync()
     {
-        throw new NotImplementedException();
+        return await _productRepository.GetAllAsync();
+    }
+
+    public async Task<Product> GetProductByIdAsync(int productId)
+    {
+        return await _productRepository.GetByIdAsync(productId);
+    }
+
+    public async Task<Product> CreateProductAsync(Product product)
+    {
+        // Add business logic or validation as needed
+        if (product == null)
+        {
+            throw new ArgumentNullException(nameof(product));
+        }
+
+        return await _productRepository.AddAsync(product);
+    }
+
+    public async Task<Product> UpdateProductAsync(int productId, Product product)
+    {
+        // Add business logic or validation as needed
+        if (product == null)
+        {
+            throw new ArgumentNullException(nameof(product));
+        }
+
+        var existingProduct = await _productRepository.GetByIdAsync(productId);
+
+        if (existingProduct == null)
+        {
+            return null; // Product not found
+        }
+
+        existingProduct.Title = product.Title;
+        existingProduct.Description = product.Description;
+        existingProduct.StockQuantity = product.StockQuantity;
+
+        return await _productRepository.UpdateAsync(existingProduct);
+    }
+
+    public async Task<Product> DeleteProductAsync(int productId)
+    {
+        var existingProduct = await _productRepository.GetByIdAsync(productId);
+
+        if (existingProduct == null)
+        {
+            return null; // Product not found
+        }
+
+        return await _productRepository.DeleteAsync(existingProduct);
     }
 }
