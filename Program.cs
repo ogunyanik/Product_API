@@ -1,6 +1,9 @@
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using Product_API.Core.Filters;
 using Product_API.Core.Interfaces;
 using Product_API.Core.Mappings;
+using Product_API.Core.Services;
 using Product_API.Infrastructure.Data;
 using Product_API.Infrastructure.Repositories;
 
@@ -15,7 +18,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("AppDatabase")));
 
-
+builder.Services.AddValidatorsFromAssemblyContaining<ValidateProductDTOAttribute>();
+builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 

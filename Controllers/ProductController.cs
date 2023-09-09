@@ -2,6 +2,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Product_API.Core.DTO;
+using Product_API.Core.Filters;
 using Product_API.Core.Interfaces;
 using Product_API.Core.Models;
 
@@ -42,6 +43,7 @@ public class ProductController : BaseController
         }
 
         [HttpPost]
+        [ValidateProductDTO]
         public async Task<IActionResult> CreateProduct([FromBody] ProductDTO productDTO)
         {
             var product = _mapper.Map<Product>(productDTO);
@@ -51,6 +53,7 @@ public class ProductController : BaseController
         }
 
         [HttpPut("{id}")]
+        [ValidateProductDTO]
         public async Task<IActionResult> UpdateProduct(int id, [FromBody] ProductDTO productDTO)
         {
             var product = _mapper.Map<Product>(productDTO);
