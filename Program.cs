@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Product_API.Core.Interfaces;
+using Product_API.Core.Mappings;
 using Product_API.Infrastructure.Data;
 using Product_API.Infrastructure.Repositories;
 
@@ -18,6 +19,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
+builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 var app = builder.Build();
 
 using (var scope =  app.Services.CreateScope())
