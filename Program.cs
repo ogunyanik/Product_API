@@ -7,6 +7,7 @@ using Product_API.Core.Services;
 using Product_API.Infrastructure.Data;
 using Product_API.Infrastructure.Repositories;
 using AspNetCoreRateLimit;
+using Product_API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,7 +38,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 var app = builder.Build();
 app.UseIpRateLimiting();
-
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 using (var scope =  app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
