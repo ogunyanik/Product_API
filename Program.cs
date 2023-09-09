@@ -6,6 +6,7 @@ using Product_API.Core.Mappings;
 using Product_API.Core.Services;
 using Product_API.Infrastructure.Data;
 using Product_API.Infrastructure.Repositories;
+using AspNetCoreRateLimit;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,8 +24,19 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
+builder.Services.AddMemoryCache();
+builder.Services.Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"));
+builder.Services.Configure<IpRateLimitPolicies>(builder.Configuration.GetSection("IpRateLimiting"));
+
+builder.Services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
+builder.Services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+builder.Services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 var app = builder.Build();
+app.UseIpRateLimiting();
 
 using (var scope =  app.Services.CreateScope())
 {
