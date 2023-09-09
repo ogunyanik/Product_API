@@ -21,7 +21,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Core\Services\" />
       <Folder Include="Tests\Integrations\" />
       <Folder Include="Tests\Unit\" />
     </ItemGroup>

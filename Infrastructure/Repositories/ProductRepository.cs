@@ -11,26 +11,14 @@ public class ProductRepository : IProductRepository
     {
         this._dbContext = dbContext;
     }
-    
-    
-    
-    
-    public Product GetById(int productId)
+
+
+    public async Task<List<Product>> GetAllProducts()
     {
         throw new NotImplementedException();
     }
 
-    public Product Create(Product product)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Update(Product product)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Delete(int productId)
+    public async Task<Product?> GetById(long id)
     {
         throw new NotImplementedException();
     }
