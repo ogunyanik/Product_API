@@ -52,7 +52,7 @@ public class ProductController : BaseController
             var product = _mapper.Map<Product>(productDTO);
             var createdProduct = await _productService.CreateProductAsync(product);
             var createdProductDTO = _mapper.Map<ProductDTO>(createdProduct);
-            return CreatedAtAction(nameof(GetProduct), new { id = createdProductDTO.ProductId }, createdProductDTO);
+            return CreatedAtAction(nameof(GetProduct), new { Title = "Deneme"   }, createdProductDTO);
         }
 
         [HttpPut("{id}")]
