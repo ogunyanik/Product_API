@@ -33,6 +33,7 @@ public class ProductController : BaseController
         }
 
         [HttpGet("{id}")]
+        [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any, VaryByQueryKeys = new[] { "productId" })]
         public async Task<IActionResult> GetProduct(int id)
         {
             var product = await _productService.GetProductByIdAsync(id);

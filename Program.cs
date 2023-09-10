@@ -122,7 +122,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 // ).AddTransientHttpErrorPolicy(policy => policy.WaitAndRetryAsync(3, _ => TimeSpan.FromMilliseconds(30)));
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
-
+builder.Services.AddResponseCaching();
 var logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration)
     .Enrich.FromLogContext()
@@ -132,7 +132,7 @@ builder.Host.UseSerilog(logger);
 var app = builder.Build();
 app.UseIpRateLimiting();
  
-
+app.UseResponseCaching();
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseSerilogRequestLogging();
 
