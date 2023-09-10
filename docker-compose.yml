@@ -8,9 +8,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: mysecretpassword
     ports:
-      - "5432:5432"
-    networks:
-      - mynetwork
+      - "5432:5432" 
 
   elasticsearch:
     container_name: elasticsearch
@@ -23,9 +21,7 @@ services:
       - xpack.monitoring.enabled=true
       - xpack.watcher.enabled=false
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - discovery.type=single-node
-    networks:
-      - mynetwork
+      - discovery.type=single-node 
 
   kibana:
     container_name: kibana
@@ -36,8 +32,6 @@ services:
       - elasticsearch
     environment:
       - ELASTICSEARCH_URL=http://elasticsearch:9200
-    networks:
-      - mynetwork
 
   product_api:
     container_name: product_api
@@ -45,14 +39,13 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "80:80"
-      - "443:443"
+      - "8080:8080"
+    expose:
+      - "5000:5000"
     depends_on:
       - postgres
     environment:
       - ConnectionStrings:DefaultConnection=Host=postgres;Port=5432;Username=postgres;Password=mysecretpassword;Database=AppDb
-    networks:
-      - mynetwork
 
 networks:
   mynetwork:
@@ -60,3 +53,4 @@ networks:
 
 volumes:
   elasticsearch-data:
+

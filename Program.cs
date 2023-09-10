@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ using Product_API.Infrastructure.Repositories;
 using AspNetCoreRateLimit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Polly;
@@ -136,12 +138,27 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfiles));
 builder.Services.AddResponseCaching();
-var logger = new LoggerConfiguration()
-    .ReadFrom.Configuration(builder.Configuration)
-    .Enrich.FromLogContext()
-    .CreateLogger();
-builder.Host.UseSerilog(logger);
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri("http://localhost:9200") ){
+        DetectElasticsearchVersion = false,
+        AutoRegisterTemplate = true,
+        AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv6
+    }).CreateLogger();
+
+Log.Information("Starting up..");
+builder.Host.UseSerilog();
+
 builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
+
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.Listen(System.Net.IPAddress.Any, 8080, listenOptions =>
+    {
+         
+    });
+});
+
+
 var app = builder.Build();
 app.UseIpRateLimiting();
 
@@ -157,8 +174,7 @@ using (var scope =  app.Services.CreateScope())
 } 
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+
     app.UseSwagger();
     app.UseSwaggerUI(options =>
     {
@@ -166,9 +182,11 @@ if (app.Environment.IsDevelopment())
         {
             options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json",
                 description.GroupName.ToUpperInvariant());
+
+            options.RoutePrefix = "api/v1/base/document";
         }
     } );
-}
+
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
