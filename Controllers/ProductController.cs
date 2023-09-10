@@ -6,11 +6,13 @@ using Product_API.Core.Filters;
 using Product_API.Core.Interfaces;
 using Product_API.Core.Models;
 using AspNetCoreRateLimit;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Product_API.Controllers;
 
 [Route("api/products")]
 [ApiController] 
+[Authorize(Policy = "StaticJwtTokenPolicy")]
 public class ProductController : BaseController
 {
     private readonly IProductService _productService;
