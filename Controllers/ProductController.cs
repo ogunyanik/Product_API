@@ -10,9 +10,11 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace Product_API.Controllers;
 
-[Route("api/products")]
+[Route("api/v{version:apiVersion}/products")]
 [ApiController] 
 [Authorize(Policy = "StaticJwtTokenPolicy")]
+[ApiVersion("1.0")]
+[ApiVersion("2.0")]
 public class ProductController : BaseController
 {
     private readonly IProductService _productService;
@@ -25,6 +27,7 @@ public class ProductController : BaseController
         }
 
         [HttpGet]
+        [MapToApiVersion("1.0")]
         public async Task<IActionResult> GetProducts()
         {
             var products = await _productService.GetAllProductsAsync();
@@ -34,6 +37,7 @@ public class ProductController : BaseController
 
         [HttpGet("{id}")]
         [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any, VaryByQueryKeys = new[] { "productId" })]
+        [MapToApiVersion("1.0")]
         public async Task<IActionResult> GetProduct(int id)
         {
             var product = await _productService.GetProductByIdAsync(id);
@@ -45,9 +49,27 @@ public class ProductController : BaseController
             var productDTO = _mapper.Map<ProductDTO>(product);
             return Ok(productDTO);
         }
+        
+        
+        [HttpGet("{id}")]
+        [ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any, VaryByQueryKeys = new[] { "productId" })]
+        [MapToApiVersion("2.0")]
+        public async Task<IActionResult> GetProductV2(int id)
+        {
+            var product = await _productService.GetProductByIdAsync(id);
+            if (product == null)
+            {
+                return NotFound("Product not found");
+            }
+
+            var productDTO = _mapper.Map<ProductDTO>(product);
+            return Ok(productDTO);
+        }
+        
 
         [HttpPost]
         [ValidateProductDTO]
+        [MapToApiVersion("1.0")]
         public async Task<IActionResult> CreateProduct([FromBody] ProductDTO productDTO)
         {
             var product = _mapper.Map<Product>(productDTO);
@@ -58,6 +80,7 @@ public class ProductController : BaseController
 
         [HttpPut("{id}")]
         [ValidateProductDTO]
+        [MapToApiVersion("1.0")]
         public async Task<IActionResult> UpdateProduct(int id, [FromBody] ProductDTO productDTO)
         {
             var product = _mapper.Map<Product>(productDTO);
@@ -72,6 +95,7 @@ public class ProductController : BaseController
         }
 
         [HttpDelete("{id}")]
+        [MapToApiVersion("1.0")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
             var deletedProduct = await _productService.DeleteProductAsync(id);
