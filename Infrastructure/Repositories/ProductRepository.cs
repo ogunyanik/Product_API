@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Product_API.Core.DTO;
 using Product_API.Core.Interfaces;
 using Product_API.Core.Models;
 using Product_API.Infrastructure.Data;
@@ -44,5 +45,12 @@ public class ProductRepository : IProductRepository
         _dbContext.Products.Remove(product);
         await _dbContext.SaveChangesAsync();
         return product;
+    }
+
+    public async Task<IEnumerable<Product>> FilterProductsAsync(ProductFilterDTO filter)
+    {
+        return await _dbContext.Products
+            .Where(p => p.StockQuantity >= filter.MinStockQuantity && p.StockQuantity <= filter.MaxStockQuantity)
+            .ToListAsync();
     }
 }

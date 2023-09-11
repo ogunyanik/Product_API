@@ -1,11 +1,9 @@
 using AutoMapper;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Product_API.Core.DTO;
 using Product_API.Core.Filters;
 using Product_API.Core.Interfaces;
 using Product_API.Core.Models;
-using AspNetCoreRateLimit;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Product_API.Controllers;
@@ -17,13 +15,18 @@ namespace Product_API.Controllers;
 [ApiVersion("2.0")]
 public class ProductController : BaseController
 {
-    private readonly IProductService _productService;
+        private readonly IProductService _productService;
         private readonly IMapper _mapper;
+        private readonly IProductSearchService _productSearchService;
 
-        public ProductController(IProductService productService, IMapper mapper)
+        public ProductController(
+            IProductService productService, 
+            IMapper mapper,
+            IProductSearchService productSearchService)
         {
             _productService = productService;
             _mapper = mapper;
+            _productSearchService = productSearchService;
         }
 
         [HttpGet]
@@ -31,6 +34,10 @@ public class ProductController : BaseController
         public async Task<IActionResult> GetProducts()
         {
             var products = await _productService.GetAllProductsAsync();
+            if (products.Any())
+            {
+                return NotFound();
+            }
             var productDTOs = _mapper.Map<IEnumerable<ProductDTO>>(products);
             return Ok(productDTOs);
         }
@@ -75,7 +82,7 @@ public class ProductController : BaseController
             var product = _mapper.Map<Product>(productDTO);
             var createdProduct = await _productService.CreateProductAsync(product);
             var createdProductDTO = _mapper.Map<ProductDTO>(createdProduct);
-            return CreatedAtAction(nameof(GetProduct), new { Title = "Deneme"   }, createdProductDTO);
+            return CreatedAtAction(nameof(GetProduct), new { Title = createdProduct.Title   }, createdProductDTO);
         }
 
         [HttpPut("{id}")]
@@ -107,6 +114,36 @@ public class ProductController : BaseController
             var deletedProductDTO = _mapper.Map<ProductDTO>(deletedProduct);
 
             return Ok(deletedProductDTO);
+        }
+        
+        
+        
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchProductsAsync([FromQuery] string query)
+        {
+            var searchResponse = await _productSearchService.SearchAsync(query);
+
+            if (!searchResponse.IsValid)
+            {
+                return StatusCode(500, "Error in Elasticsearch query");
+            }
+
+            var products = searchResponse.Documents;
+
+            return Ok(products);
+        }
+        
+        [HttpGet("filter")]
+        public async Task<IActionResult> ProductFilterByQuantity([FromQuery] ProductFilterDTO filter)
+        {
+            
+            var filteredProducts = await _productService.ProductFilterByQuantity(filter);
+
+            if (filteredProducts.Any())
+            {
+                return NotFound();
+            }
+            return Ok(filteredProducts);
         }
 
 }

@@ -20,7 +20,8 @@ using Product_API.Middleware;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.Elasticsearch;
-
+using Elasticsearch.Net;
+using Nest;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -59,6 +60,21 @@ builder.Services.AddSwaggerGen(options =>
         new List<string>()
     }});
     });
+ 
+var connectionPool = new SingleNodeConnectionPool(new Uri(builder.Configuration["Elasticsearch:Uri"]));
+var settings = new ConnectionSettings(connectionPool)
+    .DefaultIndex(builder.Configuration["Elasticsearch:DefaultIndex"]);
+var client = new ElasticClient(settings);
+
+// Register the Elasticsearch client
+builder.Services.AddSingleton<IElasticClient>(client);
+
+// Register the ProductSearchService
+builder.Services.AddSingleton<IProductSearchService,ProductSearchService>();
+
+
+
+
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("AppDatabase")));

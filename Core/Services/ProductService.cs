@@ -1,5 +1,7 @@
+using Product_API.Core.DTO;
 using Product_API.Core.Interfaces;
 using Product_API.Core.Models;
+using Product_API.Core.Models.Enums;
 
 namespace Product_API.Core.Services;
 
@@ -28,6 +30,12 @@ public class ProductService : IProductService
         if (product == null)
         {
             throw new ArgumentNullException(nameof(product));
+        }
+        
+        // Assign the category name based on the CategoryId and CategoryEnum
+        if (Enum.IsDefined(typeof(CategoryEnum), product.Category.CategoryId))
+        {
+            product.Category.Name = Enum.GetName(typeof(CategoryEnum), product.Category.CategoryId);
         }
 
         return await _productRepository.AddAsync(product);
@@ -65,5 +73,10 @@ public class ProductService : IProductService
         }
 
         return await _productRepository.DeleteAsync(existingProduct);
+    }
+
+    public async Task<IEnumerable<Product>> ProductFilterByQuantity(ProductFilterDTO productFilterDto)
+    {
+        return await _productRepository.FilterProductsAsync(productFilterDto);
     }
 }

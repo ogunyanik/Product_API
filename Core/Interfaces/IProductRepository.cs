@@ -1,3 +1,4 @@
+using Product_API.Core.DTO;
 using Product_API.Core.Models;
 
 namespace Product_API.Core.Interfaces;
@@ -9,4 +10,5 @@ public interface IProductRepository
     Task<Product> AddAsync(Product product);
     Task<Product> UpdateAsync(Product product);
     Task<Product> DeleteAsync(Product product);
+    Task<IEnumerable<Product>> FilterProductsAsync(ProductFilterDTO filter);
 }

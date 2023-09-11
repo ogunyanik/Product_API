@@ -1,3 +1,4 @@
+using Product_API.Core.DTO;
 using Product_API.Core.Models;
 
 namespace Product_API.Core.Interfaces;
@@ -9,4 +10,5 @@ public interface IProductService
     Task<Product> CreateProductAsync(Product product);
     Task<Product> UpdateProductAsync(int productId, Product product);
     Task<Product> DeleteProductAsync(int productId);
+    Task<IEnumerable<Product>> ProductFilterByQuantity(ProductFilterDTO productId);
 }
