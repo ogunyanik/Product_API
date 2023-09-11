@@ -1,6 +1,6 @@
 # Product Api
 
-Project Description:  
+Project Description: Provides CRUD operations for managing products.
 
 ## Table of Contents
 
