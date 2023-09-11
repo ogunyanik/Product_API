@@ -34,7 +34,7 @@ This project leverages the following technologies and tools:
 
 ## API Documentation
 
-Explore the API using SwaggerUI: [API Documentation](api/documents/index.html)
+Explore the API using SwaggerUI: http://localhost:8080/api/documents
 
 
 ## Features
