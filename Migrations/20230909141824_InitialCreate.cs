@@ -24,6 +24,16 @@ namespace Product_API.Migrations
                 {
                     table.PrimaryKey("PK_Categories", x => x.CategoryId);
                 });
+            
+            migrationBuilder.InsertData(
+                table: "Categories",
+                columns: new[] { "CategoryId", "Name", "MinimumStockQuantity" },
+                values: new object[] { 1, "Phone", 10 });
+
+            migrationBuilder.InsertData(
+                table: "Categories",
+                columns: new[] { "CategoryId", "Name", "MinimumStockQuantity" },
+                values: new object[] { 2, "Tablet", 10 });
 
             migrationBuilder.CreateTable(
                 name: "Products",
