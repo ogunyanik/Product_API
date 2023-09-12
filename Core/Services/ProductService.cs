@@ -32,7 +32,7 @@ public class ProductService : IProductService
             throw new ArgumentNullException(nameof(product));
         }
         
-        // Assign the category name based on the CategoryId and CategoryEnum
+        //this function could be moved in utils/helper method.
         if (Enum.IsDefined(typeof(CategoryEnum), product.Category.CategoryId))
         {
             product.Category.Name = Enum.GetName(typeof(CategoryEnum), product.Category.CategoryId);
@@ -59,7 +59,15 @@ public class ProductService : IProductService
         existingProduct.Title = product.Title;
         existingProduct.Description = product.Description;
         existingProduct.StockQuantity = product.StockQuantity;
-
+        
+        //this function could be moved in utils/helper method.  
+        if (Enum.IsDefined(typeof(CategoryEnum), product.Category.CategoryId))
+        {
+            product.Category.Name = Enum.GetName(typeof(CategoryEnum), product.Category.CategoryId);
+        }
+        
+        
+        
         return await _productRepository.UpdateAsync(existingProduct);
     }
 
