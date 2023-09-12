@@ -30,14 +30,7 @@ public class ProductService : IProductService
         if (product == null)
         {
             throw new ArgumentNullException(nameof(product));
-        }
-        
-        //this function could be moved in utils/helper method.
-        if (Enum.IsDefined(typeof(CategoryEnum), product.Category.CategoryId))
-        {
-            product.Category.Name = Enum.GetName(typeof(CategoryEnum), product.Category.CategoryId);
-        }
-
+        } 
         return await _productRepository.AddAsync(product);
     }
 
@@ -58,14 +51,7 @@ public class ProductService : IProductService
 
         existingProduct.Title = product.Title;
         existingProduct.Description = product.Description;
-        existingProduct.StockQuantity = product.StockQuantity;
-        
-        //this function could be moved in utils/helper method.  
-        if (Enum.IsDefined(typeof(CategoryEnum), product.Category.CategoryId))
-        {
-            product.Category.Name = Enum.GetName(typeof(CategoryEnum), product.Category.CategoryId);
-        }
-        
+        existingProduct.StockQuantity = product.StockQuantity; 
         
         
         return await _productRepository.UpdateAsync(existingProduct);

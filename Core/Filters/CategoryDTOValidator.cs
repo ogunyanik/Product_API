@@ -5,17 +5,18 @@ using Product_API.Core.Models.Enums;
 
 namespace Product_API.Core.Filters;
 
-public class CategoryDTOValidator: AbstractValidator<CategoryDTO>
+public class CategoryDTOValidator: AbstractValidator<int>
 {
     public CategoryDTOValidator()
     {
-        RuleFor(category => category.Id)
-            .NotEmpty()
-            .IsEnumName(typeof(CategoryEnum), caseSensitive: false)
-            .WithMessage("Category must be either 'Phone' or 'Tablet'");
-
-        RuleFor(category => category.MinimumStockQuantity)
-            .GreaterThan(0)
-            .WithMessage("MinimumStockQuantity must be greater than 0");
+        RuleFor(x => x)
+            .Must(BeAValidCategoryEnumValue)
+            .WithMessage("Category must be a valid CategoryId -- Check documentation for valid values (there is no documentation yet :) ).");
+ 
+    }
+    
+    private static bool BeAValidCategoryEnumValue(int categoryId)
+    {
+        return Enum.IsDefined(typeof(CategoryEnum), categoryId);
     }
 }

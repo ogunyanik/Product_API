@@ -8,5 +8,5 @@ public class ProductDTO
     public string Description { get; set; }
     public int StockQuantity { get; set; }
     
-    public CategoryDTO CategoryDto{ get; set; }
+    public int CategoryId{ get; set; }
 }

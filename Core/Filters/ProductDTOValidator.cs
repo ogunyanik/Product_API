@@ -10,9 +10,9 @@ public class ProductDTOValidator: AbstractValidator<ProductDTO>
         RuleFor(product => product.Title).NotEmpty().MaximumLength(200);
         RuleFor(product => product.Description).NotEmpty();
         RuleFor(product => product.StockQuantity).GreaterThanOrEqualTo(0); 
-        RuleFor(product => product.CategoryDto)
+        RuleFor(product => product.CategoryId)
             .NotNull()
-            .SetValidator(new CategoryDTOValidator());
+            .SetValidator(new CategoryDTOValidator()); 
     }
 }
 

@@ -25,8 +25,7 @@ public class ProductSearchService : IProductSearchService
                 .MultiMatch(m => m
                     .Fields(f => f
                         .Field(p => p.Title)
-                        .Field(p => p.Description)
-                        .Field(p => p.Category.Name)
+                        .Field(p => p.Description) 
                     )
                     .Query(query)
                 )

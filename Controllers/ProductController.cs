@@ -34,7 +34,7 @@ public class ProductController : BaseController
         public async Task<IActionResult> GetProducts()
         {
             var products = await _productService.GetAllProductsAsync();
-            if (products.Any())
+            if (!products.Any())
             {
                 return NotFound();
             }
@@ -82,7 +82,7 @@ public class ProductController : BaseController
             var product = _mapper.Map<Product>(productDTO);
             var createdProduct = await _productService.CreateProductAsync(product);
             var createdProductDTO = _mapper.Map<ProductDTO>(createdProduct);
-            return CreatedAtAction(nameof(GetProduct), new { Title = createdProduct.Title   }, createdProductDTO);
+            return CreatedAtAction(nameof(CreateProduct), new { Title = createdProductDTO.Title   }, createdProductDTO);
         }
 
         [HttpPut("{id}")]
@@ -139,7 +139,7 @@ public class ProductController : BaseController
             
             var filteredProducts = await _productService.ProductFilterByQuantity(filter);
 
-            if (filteredProducts.Any())
+            if (!filteredProducts.Any())
             {
                 return NotFound();
             }
