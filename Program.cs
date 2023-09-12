@@ -199,7 +199,7 @@ using (var scope =  app.Services.CreateScope())
             options.SwaggerEndpoint($"/swagger/{description.GroupName}/swagger.json",
                 description.GroupName.ToUpperInvariant());
 
-            options.RoutePrefix = "api/v1/base/document";
+            options.RoutePrefix = "api/documents";
         }
     } );
 
